@@ -202,14 +202,20 @@ const servidor = http.createServer(async (req, res) => {
   try {
     const url = new URL(req.url, "http://x");
     let ruta = decodeURIComponent(url.pathname);
-    if (ruta === "/editar" || ruta === "/editar/" || ruta.startsWith("/api/")) {
+    if (ruta === "/editar" || ruta.startsWith("/editar/") || ruta.startsWith("/api/")) {
       if (!esDeEstaNotebook(req)) {
         res.writeHead(403, { "Content-Type": "text/plain; charset=utf-8" });
         res.end("El editor solo se puede usar desde la notebook de la carta.");
         return;
       }
       if (ruta.startsWith("/api/")) return await api(req, res, ruta, url);
-      ruta = "/herramientas/editor/index.html";
+      // Con la barra final, el editor encuentra sus archivos (editor.js, editor.css) al lado.
+      if (ruta === "/editar") {
+        res.writeHead(302, { Location: "/editar/" });
+        res.end();
+        return;
+      }
+      ruta = "/herramientas/editor/" + ruta.slice("/editar/".length);
     }
     if (ruta === "/qr" || ruta === "/qr/") {
       res.writeHead(200, { "Content-Type": TIPOS[".html"], "Cache-Control": "no-cache" });

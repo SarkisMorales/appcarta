@@ -501,7 +501,8 @@ async function publicarCarta() {
 
 function fallo(titulo, texto) {
   $("#contenido").replaceChildren(el("div", { class: "bloque fallo" }, el("h2", {}, titulo), el("p", {}, texto)));
-  document.querySelectorAll(".acciones button, .buscar").forEach((b) => { b.disabled = true; });
+  // En internet (o con la notebook apagada) no queda ningún botón de editar a la vista.
+  document.querySelectorAll(".acciones, .buscar, #estado").forEach((e) => { e.hidden = true; });
 }
 
 async function iniciar() {
