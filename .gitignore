@@ -1,0 +1,6 @@
+node_modules/
+# Las fotos originales del celular pesan mucho: se guardan solo las optimizadas de fotos/
+fotos-originales/*
+!fotos-originales/.gitkeep
+# Copia automática que deja el editor antes de cada guardado (solo para esta notebook)
+menu.anterior.json

@@ -1,0 +1,103 @@
+{
+  "negocio": {
+    "nombre": "Tu Café",
+    "subtitulo": "Cafetería · Minimarket",
+    "direccion": "Mendoza",
+    "horario": "Lunes a sábado de 8 a 21 h",
+    "whatsapp": "",
+    "instagram": ""
+  },
+  "actualizado": "2026-10-30",
+  "categorias": [
+    {
+      "id": "cafeteria",
+      "nombre": "Cafetería",
+      "emoji": "☕",
+      "productos": [
+        {
+          "nombre": "Café con leche",
+          "descripcion": "Espresso con leche cremosa. Elegí el tamaño.",
+          "variantes": [
+            {
+              "nombre": "Jarrito",
+              "precio": 2500
+            },
+            {
+              "nombre": "Taza grande",
+              "precio": 3200
+            }
+          ],
+          "foto": "fotos/cafe-con-leche.webp",
+          "etiqueta": "Más pedido"
+        },
+        {
+          "nombre": "Cortado",
+          "descripcion": "Espresso con un toque de leche.  asdasasd",
+          "precio": 55000,
+          "foto": "fotos/cortado-3.webp"
+        },
+        {
+          "nombre": "Submarino",
+          "descripcion": "Leche caliente con barra de chocolate para derretir.",
+          "precio": 3500
+        },
+        {
+          "nombre": "Capuchino italiano",
+          "descripcion": "Este producto está agotado: no aparece en la carta porque tiene disponible: false.",
+          "precio": 3800
+        }
+      ]
+    },
+    {
+      "id": "para-acompanar",
+      "nombre": "Para acompañar",
+      "emoji": "🥐",
+      "productos": [
+        {
+          "nombre": "Medialunas x3",
+          "descripcion": "De manteca, recién horneadas.",
+          "precio": 2400,
+          "precio_anterior": 3000,
+          "foto": "fotos/medialunas.webp",
+          "etiqueta": "Promo"
+        },
+        {
+          "nombre": "Tostado de jamón y queso",
+          "descripcion": "En pan de miga, bien dorado. Viene con una medialuna de regalo.",
+          "precio": 5200,
+          "foto": "fotos/tostado.webp"
+        },
+        {
+          "nombre": "Alfajor de maicenaa",
+          "descripcion": "Casero, con dulce de leche y coco rallado.",
+          "precio": 50000
+        }
+      ]
+    },
+    {
+      "id": "bebidas-frias",
+      "nombre": "Bebidas frías",
+      "emoji": "🥤",
+      "productos": [
+        {
+          "nombre": "Licuado de banana",
+          "descripcion": "Con leche o con agua. 400 ml.",
+          "precio": 3900,
+          "foto": "fotos/licuado.webp",
+          "etiqueta": "Nuevo"
+        },
+        {
+          "nombre": "Jugo de naranja exprimido",
+          "descripcion": "Naranjas exprimidas en el momento. 350 ml.",
+          "precio": 3600,
+          "foto": "fotos/jugo.webp"
+        },
+        {
+          "nombre": "Agua mineral 500 ml",
+          "descripcion": "Con o sin gas.",
+          "precio": 1300
+        }
+      ]
+    }
+  ]
+}

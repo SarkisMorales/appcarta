@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Editor de la carta</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='32' fill='%23502314'/%3E%3Ctext x='32' y='44' font-size='34' text-anchor='middle' fill='%23FFF8F0' font-family='Arial' font-weight='bold'%3E✎%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="/herramientas/editor/editor.css">
+</head>
+<body>
+  <header class="barra">
+    <div class="titulo">
+      <strong>Editor de la carta</strong>
+      <span id="estado" class="estado"></span>
+    </div>
+    <input id="buscar" class="buscar" type="search" placeholder="Buscar producto…" aria-label="Buscar producto">
+    <div class="acciones">
+      <a class="btn secundario" href="/" target="_blank">Ver carta</a>
+      <a class="btn secundario" href="/qr">QR</a>
+      <button id="guardar" class="btn" type="button" disabled>Guardar</button>
+      <button id="publicar" class="btn principal" type="button">Publicar</button>
+    </div>
+  </header>
+
+  <main id="contenido" class="contenido">
+    <p class="cargando">Cargando la carta…</p>
+  </main>
+
+  <datalist id="etiquetas"></datalist>
+  <datalist id="emojis"></datalist>
+
+  <dialog id="dialogo" class="dialogo">
+    <h2 id="dialogo-titulo"></h2>
+    <div id="dialogo-cuerpo"></div>
+    <form method="dialog"><button id="dialogo-cerrar" class="btn" type="submit">Cerrar</button></form>
+  </dialog>
+
+  <div id="aviso" class="aviso" role="status" aria-live="polite"></div>
+
+  <script src="/herramientas/editor/editor.js" defer></script>
+</body>
+</html>

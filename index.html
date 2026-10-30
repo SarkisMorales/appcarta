@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Carta</title>
+  <meta name="description" content="Nuestra carta con precios actualizados.">
+  <meta name="theme-color" content="#FFF8F0">
+  <meta name="color-scheme" content="light">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='32' fill='%23502314'/%3E%3Ctext x='32' y='44' font-size='34' text-anchor='middle' fill='%23FFF8F0' font-family='Arial' font-weight='bold'%3EC%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Nunito:wght@400;700&display=swap">
+  <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+  <header class="cabecera">
+    <div class="marca">
+      <div class="logo" id="logo" aria-hidden="true"></div>
+      <div>
+        <h1 id="nombre-negocio">Carta</h1>
+        <p id="subtitulo" class="subtitulo"></p>
+      </div>
+    </div>
+    <p id="info-negocio" class="info-negocio"></p>
+  </header>
+
+  <nav class="nav-categorias" id="nav" aria-label="Categorías">
+    <div class="pildoras" id="pildoras"></div>
+  </nav>
+
+  <main id="carta" class="carta">
+    <p class="cargando">Cargando carta…</p>
+  </main>
+
+  <footer class="pie" id="pie"></footer>
+
+  <dialog id="detalle" class="detalle" aria-labelledby="detalle-nombre">
+    <div class="detalle-caja" id="detalle-caja"></div>
+  </dialog>
+
+  <script src="carta.js" defer></script>
+</body>
+</html>

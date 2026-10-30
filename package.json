@@ -1,0 +1,15 @@
+{
+  "name": "carta-digital",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "ver": "node herramientas/servidor.mjs",
+    "qr": "node herramientas/qr.mjs",
+    "fotos": "node herramientas/fotos.mjs",
+    "publicar": "node herramientas/publicar.mjs"
+  },
+  "devDependencies": {
+    "qrcode": "^1.5.4",
+    "sharp": "^0.34.1"
+  }
+}
