@@ -362,3 +362,55 @@ input:focus, textarea:focus, select:focus { outline: 2px solid var(--marron); ou
   .mini { width: 44px; height: 44px; }
   .detalle { padding-left: 0; }
 }
+
+/* ---------- Ofertas, recomendados y pedidos ---------- */
+
+.ayuda { display: block; margin: 0 0 10px; color: var(--suave); font-size: 13px; line-height: 1.4; }
+.ayuda.alerta { color: var(--naranja); font-weight: 700; }
+.bloque > .ayuda { margin: 10px 0 2px; }
+
+.ofertas { border: 2px solid #FFD2C2; }
+.ofertas .cat-cabecera { border-bottom: 0; padding-bottom: 0; }
+.emoji-fijo { font-size: 26px; }
+.titulo-bloque { margin: 0; flex: 1; font-size: 20px; font-weight: 800; color: var(--rojo); }
+
+.estado-oferta { font-weight: 700; }
+.estado-oferta.verde { color: var(--verde); }
+.estado-oferta.naranja { color: var(--naranja); }
+.estado-oferta.gris { color: var(--suave); }
+.producto.oferta .nombre small { white-space: normal; }
+.ahorro { display: block; margin: -4px 0 10px; color: var(--rojo); font-size: 13px; font-weight: 700; }
+
+.dias { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.dia {
+  min-width: 48px;
+  padding: 7px 10px;
+  border: 1.5px solid var(--linea);
+  border-radius: 10px;
+  background: var(--tarjeta);
+  font-weight: 700;
+  cursor: pointer;
+}
+.dia[aria-pressed="true"] { border-color: var(--marron); background: var(--marron); color: var(--fondo); }
+.atajos { display: inline-flex; gap: 12px; margin-left: 6px; font-size: 13px; }
+
+.marcas { display: flex; flex-wrap: wrap; gap: 6px; }
+.marcas:empty { display: none; }
+.marca { padding: 1px 8px; border-radius: 999px; font-size: 12px; font-weight: 800; }
+.marca.destacado { background: #FFF3C4; color: #7A5A00; }
+.marca.oferta { background: #FFE6DD; color: var(--rojo); }
+
+.check.destacar { margin-top: 6px; }
+
+.pedidos-config {
+  margin-top: 6px;
+  padding: 14px;
+  border-radius: 12px;
+  background: var(--fondo);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+.pedidos-config .ayuda { margin: 0; }
+.fotos-local { display: flex; flex-direction: column; gap: 18px; }

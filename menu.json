@@ -5,9 +5,80 @@
     "direccion": "Mendoza",
     "horario": "Lunes a sábado de 8 a 23 h",
     "whatsapp": "2612641587",
-    "instagram": "morficlub"
+    "instagram": "morficlub",
+    "portada": "fotos/prueba-portada.webp"
   },
   "actualizado": "2026-10-30",
+  "ofertas": [
+    {
+      "titulo": "Desayuno completo",
+      "descripcion": "Café con leche + 2 medialunas + jugo de naranja exprimido.",
+      "precio": 6500,
+      "precio_anterior": 7700,
+      "foto": "fotos/prueba-oferta-desayuno.webp",
+      "etiqueta": "Combo",
+      "dias": [
+        "lun",
+        "mar",
+        "mie",
+        "jue",
+        "vie",
+        "sab"
+      ],
+      "desde": "08:00",
+      "hasta": "11:30"
+    },
+    {
+      "titulo": "Combo almuerzo",
+      "descripcion": "Hamburguesa completa con papas + gaseosa o agua mineral.",
+      "precio": 9900,
+      "precio_anterior": 11100,
+      "foto": "fotos/prueba-oferta-almuerzo.webp",
+      "etiqueta": "Combo",
+      "dias": [
+        "lun",
+        "mar",
+        "mie",
+        "jue",
+        "vie",
+        "sab"
+      ],
+      "desde": "12:00",
+      "hasta": "15:30"
+    },
+    {
+      "titulo": "2x1 en licuados",
+      "descripcion": "Llevá 2 licuados y pagá 1. Ideal para la merienda.",
+      "precio": 3900,
+      "precio_anterior": 7800,
+      "foto": "fotos/prueba-oferta-licuados.webp",
+      "etiqueta": "2x1",
+      "dias": [
+        "lun",
+        "mar",
+        "mie",
+        "jue",
+        "vie"
+      ],
+      "desde": "16:00",
+      "hasta": "19:00"
+    },
+    {
+      "titulo": "Happy hour",
+      "descripcion": "2 pintas de cerveza rubia al precio de 1.",
+      "precio": 4500,
+      "precio_anterior": 9000,
+      "foto": "fotos/prueba-oferta-cerveza.webp",
+      "etiqueta": "2x1",
+      "dias": [
+        "jue",
+        "vie",
+        "sab"
+      ],
+      "desde": "19:00",
+      "hasta": "22:00"
+    }
+  ],
   "categorias": [
     {
       "id": "cafeteria",
@@ -27,8 +98,9 @@
               "precio": 3200
             }
           ],
-          "foto": "fotos/cafe-con-leche.webp",
-          "etiqueta": "Más pedido"
+          "foto": "fotos/prueba-cafe-con-leche.webp",
+          "etiqueta": "Más pedido",
+          "destacado": true
         },
         {
           "nombre": "Cortado",
@@ -39,12 +111,14 @@
         {
           "nombre": "Submarino",
           "descripcion": "Leche caliente con barra de chocolate para derretir.",
-          "precio": 3500
+          "precio": 3500,
+          "foto": "fotos/prueba-submarino.webp"
         },
         {
           "nombre": "Capuchino italiano",
           "descripcion": "Este producto está agotado: no aparece en la carta porque tiene disponible: false.",
-          "precio": 3800
+          "precio": 3800,
+          "foto": "fotos/prueba-capuchino.webp"
         }
       ]
     },
@@ -58,19 +132,88 @@
           "descripcion": "De manteca, recién horneadas.",
           "precio": 2400,
           "precio_anterior": 3000,
-          "foto": "fotos/medialunas.webp",
+          "foto": "fotos/prueba-medialunas.webp",
           "etiqueta": "Promo"
         },
         {
           "nombre": "Tostado de jamón y queso",
           "descripcion": "En pan de miga, bien dorado. Viene con una medialuna de regalo.",
           "precio": 5200,
-          "foto": "fotos/tostado.webp"
+          "foto": "fotos/prueba-tostado.webp"
         },
         {
           "nombre": "Alfajor de maicenaa",
           "descripcion": "Casero, con dulce de leche y coco rallado.",
           "precio": 50000
+        }
+      ]
+    },
+    {
+      "id": "comidas",
+      "nombre": "Comidas",
+      "emoji": "🍔",
+      "productos": [
+        {
+          "nombre": "Hamburguesa completa con papas",
+          "descripcion": "Medallón de carne de 180 g, cheddar, lechuga, tomate y papas fritas.",
+          "precio": 9800,
+          "foto": "fotos/prueba-hamburguesa.webp",
+          "etiqueta": "Nuevo",
+          "destacado": true
+        },
+        {
+          "nombre": "Milanesa con papas fritas",
+          "descripcion": "Milanesa de ternera bien crocante, papas fritas caseras y limón.",
+          "variantes": [
+            {
+              "nombre": "Simple",
+              "precio": 11500
+            },
+            {
+              "nombre": "Napolitana",
+              "precio": 13200
+            }
+          ],
+          "foto": "fotos/prueba-milanesa.webp"
+        },
+        {
+          "nombre": "Ensalada César",
+          "descripcion": "Lechuga fresca, pollo grillado, croutons, parmesano y aderezo César.",
+          "precio": 8900,
+          "foto": "fotos/prueba-ensalada.webp",
+          "etiqueta": "Liviano"
+        },
+        {
+          "nombre": "Tostadas con palta y huevo",
+          "descripcion": "Pan de masa madre, palta, huevo y semillas.",
+          "precio": 7200,
+          "foto": "fotos/prueba-tostadas-palta.webp"
+        }
+      ]
+    },
+    {
+      "id": "postres",
+      "nombre": "Postres",
+      "emoji": "🍰",
+      "productos": [
+        {
+          "nombre": "Torta de chocolate",
+          "descripcion": "Porción de torta húmeda con ganache de chocolate.",
+          "precio": 4900,
+          "foto": "fotos/prueba-torta-chocolate.webp"
+        },
+        {
+          "nombre": "Cheesecake de frutos rojos",
+          "descripcion": "Base crocante, crema suave y salsa de frutos rojos.",
+          "precio": 5200,
+          "foto": "fotos/prueba-cheesecake.webp",
+          "etiqueta": "Nuevo"
+        },
+        {
+          "nombre": "Brownie con helado",
+          "descripcion": "Brownie tibio con una bocha de helado de crema americana.",
+          "precio": 4600,
+          "foto": "fotos/prueba-brownie.webp"
         }
       ]
     },
@@ -83,19 +226,20 @@
           "nombre": "Licuado de banana",
           "descripcion": "Con leche o con agua. 400 ml.",
           "precio": 3900,
-          "foto": "fotos/licuado.webp",
+          "foto": "fotos/prueba-licuado-banana.webp",
           "etiqueta": "Nuevo"
         },
         {
           "nombre": "Jugo de naranja exprimido",
           "descripcion": "Naranjas exprimidas en el momento. 350 ml.",
           "precio": 3600,
-          "foto": "fotos/jugo.webp"
+          "foto": "fotos/prueba-jugo-naranja.webp"
         },
         {
           "nombre": "Agua mineral 500 ml",
           "descripcion": "Con o sin gas.",
-          "precio": 1300
+          "precio": 1300,
+          "foto": "fotos/prueba-agua.webp"
         }
       ]
     }

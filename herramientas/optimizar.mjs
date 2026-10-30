@@ -13,16 +13,17 @@ export function nombreLimpio(texto) {
 }
 
 // Recibe la ruta o el contenido de la foto y devuelve el WebP ya achicado.
-export async function optimizarFoto(entrada) {
+// La portada se guarda más grande porque se ve de lado a lado: { ancho: 1400, limite: 240 KB }.
+export async function optimizarFoto(entrada, { ancho = ANCHO, limite = LIMITE } = {}) {
   let calidad = 80;
   let datos;
   do {
     datos = await sharp(entrada)
       .rotate() // respeta la orientación de la foto del celular
-      .resize({ width: ANCHO, height: ANCHO, fit: "inside", withoutEnlargement: true })
+      .resize({ width: ancho, height: ancho, fit: "inside", withoutEnlargement: true })
       .webp({ quality: calidad })
       .toBuffer();
     calidad -= 10;
-  } while (datos.length > LIMITE && calidad >= 40);
+  } while (datos.length > limite && calidad >= 40);
   return datos;
 }

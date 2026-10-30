@@ -8,6 +8,7 @@ import path from "node:path";
 import { spawn } from "node:child_process";
 import { RAIZ, revisarMenu, urlPublica } from "./revisar-menu.mjs";
 import { publicar } from "./publicar.mjs";
+import { actualizarMetas } from "./metas.mjs";
 
 const PUERTO = Number(process.env.PUERTO) || 8080;
 // Qué se abre en el navegador al arrancar: el QR (VER-CARTA.bat) o el editor (EDITAR-CARTA.bat).
@@ -43,7 +44,7 @@ function ipsLocales() {
 }
 
 function abrirNavegador(url) {
-  if (process.platform !== "win32") return;
+  if (process.platform !== "win32" || process.env.SIN_NAVEGADOR) return;
   spawn("cmd", ["/c", "start", "", url], { detached: true, stdio: "ignore" }).unref();
 }
 
@@ -118,6 +119,8 @@ async function api(req, res, ruta, url) {
     // Copia de lo que había antes, por si hace falta volver atrás (no se publica).
     await fs.copyFile(MENU, path.join(RAIZ, "menu.anterior.json")).catch(() => {});
     await fs.writeFile(MENU, JSON.stringify(datos, null, 2) + "\n");
+    // Nombre, foto y descripción para cuando se comparte el link de la carta.
+    await actualizarMetas().catch((e) => console.log("  (No pude actualizar la vista previa para compartir: " + e.message + ")"));
     console.log("  ✓ Cambios guardados desde el editor.");
     return responderJson(res, 200, { ok: true, actualizado: datos.actualizado });
   }
@@ -125,8 +128,9 @@ async function api(req, res, ruta, url) {
   if (ruta === "/api/foto" && req.method === "POST") {
     try {
       const { nombreLimpio, optimizarFoto } = await import("./optimizar.mjs");
-      const datos = await optimizarFoto(await leerCuerpo(req, MAX_FOTO));
       const base = nombreLimpio(url.searchParams.get("nombre"));
+      const tamano = base === "portada" ? { ancho: 1400, limite: 240 * 1024 } : {};
+      const datos = await optimizarFoto(await leerCuerpo(req, MAX_FOTO), tamano);
       await fs.mkdir(path.join(RAIZ, "fotos"), { recursive: true });
       // No pisa una foto que ya exista con el mismo nombre.
       let nombre = base + ".webp";

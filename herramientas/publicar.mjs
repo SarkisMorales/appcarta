@@ -4,6 +4,7 @@ import { spawnSync } from "node:child_process";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { RAIZ, revisarMenu, urlPublica } from "./revisar-menu.mjs";
+import { actualizarMetas } from "./metas.mjs";
 
 // Devuelve true si quedó publicado. "escribir" recibe cada línea del informe.
 // Con "enVentana" los mensajes de Git se ven en la ventana negra; si no, se juntan en el informe.
@@ -25,6 +26,9 @@ export async function publicar(escribir = console.log, enVentana = true) {
     if (git(["remote", "get-url", "origin"]).status !== 0) {
       return cortar("Esta carpeta todavía no está conectada a un repositorio de GitHub.");
     }
+
+    // Por si menu.json se cambió a mano: la vista previa al compartir tiene que coincidir con la carta.
+    await actualizarMetas().catch((e) => escribir("  (No pude actualizar la vista previa para compartir: " + e.message + ")"));
 
     git(["add", "-A"]);
     const cambios = git(["status", "--porcelain"]).stdout.trim();

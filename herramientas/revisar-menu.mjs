@@ -21,18 +21,28 @@ export async function revisarMenu(escribir = console.log) {
     return false;
   }
   const avisos = [];
+  async function revisarFoto(foto, quien) {
+    if (!foto) return;
+    try {
+      const { size } = await fs.stat(path.join(RAIZ, foto));
+      if (size > 250 * 1024) avisos.push(`La foto de "${quien}" pesa ${Math.round(size / 1024)} KB (ideal: menos de 200 KB).`);
+    } catch {
+      avisos.push(`No encuentro la foto de "${quien}": ${foto} (se va a ver sin foto).`);
+    }
+  }
+  for (const o of datos.ofertas || []) {
+    if (!o.titulo) avisos.push("Hay una oferta sin nombre (no se muestra).");
+    else if (o.precio == null) avisos.push(`La oferta "${o.titulo}" no tiene precio.`);
+    await revisarFoto(o.foto, o.titulo || "oferta sin nombre");
+  }
+  const n = datos.negocio || {};
+  await revisarFoto(n.portada, "portada");
+  await revisarFoto(n.logo, "logo");
   for (const c of datos.categorias || []) {
     for (const p of c.productos || []) {
       if (!p.nombre) avisos.push(`Un producto de "${c.nombre}" no tiene nombre.`);
       if (p.precio == null && !(p.variantes || []).length) avisos.push(`"${p.nombre}" no tiene precio (va a decir "Consultar").`);
-      if (p.foto) {
-        try {
-          const { size } = await fs.stat(path.join(RAIZ, p.foto));
-          if (size > 250 * 1024) avisos.push(`La foto de "${p.nombre}" pesa ${Math.round(size / 1024)} KB (ideal: menos de 200 KB).`);
-        } catch {
-          avisos.push(`No encuentro la foto de "${p.nombre}": ${p.foto} (se va a ver sin foto).`);
-        }
-      }
+      await revisarFoto(p.foto, p.nombre);
     }
   }
   if (avisos.length) {
