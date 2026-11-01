@@ -18,12 +18,10 @@
       "foto": "fotos/desayuno-completo.webp",
       "etiqueta": "Combo",
       "dias": [
-        "lun",
         "mar",
         "mie",
         "jue",
-        "vie",
-        "sab"
+        "vie"
       ],
       "desde": "00:10",
       "hasta": "13:00"
@@ -36,12 +34,10 @@
       "foto": "fotos/combo-almuerzo.webp",
       "etiqueta": "Combo",
       "dias": [
-        "lun",
         "mar",
         "mie",
         "jue",
-        "vie",
-        "sab"
+        "vie"
       ],
       "desde": "00:10",
       "hasta": "13:50"
