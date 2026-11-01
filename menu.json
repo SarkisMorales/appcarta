@@ -22,9 +22,7 @@
         "mie",
         "jue",
         "vie"
-      ],
-      "desde": "00:10",
-      "hasta": "13:00"
+      ]
     },
     {
       "titulo": "Docena Empanadas Carne",
@@ -34,13 +32,9 @@
       "foto": "fotos/combo-almuerzo.webp",
       "etiqueta": "Combo",
       "dias": [
-        "mar",
-        "mie",
-        "jue",
-        "vie"
-      ],
-      "desde": "00:10",
-      "hasta": "13:50"
+        "sab",
+        "dom"
+      ]
     },
     {
       "titulo": "2x1 en licuados",
