@@ -228,5 +228,12 @@
         }
       ]
     }
+  ],
+  "sugerencias": [
+    {
+      "nombre": "asasas",
+      "precio": 12222,
+      "foto": "fotos/asasas.webp"
+    }
   ]
 }

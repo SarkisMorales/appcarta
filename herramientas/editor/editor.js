@@ -452,6 +452,81 @@ function bloqueOfertas() {
     }, "+ Agregar oferta o combo"));
 }
 
+// ---------- "¿Le sumás algo?" (lo que se ofrece al ver el pedido) ----------
+
+function tarjetaSugerencia(s, i) {
+  const abierto = abiertos.has(s);
+  const agotado = s.disponible === false;
+  const alternar = () => { abierto ? abiertos.delete(s) : abiertos.add(s); dibujar(); };
+  const titulo = el("strong", {}, s.nombre || "Sin nombre");
+  const bajada = el("small", {}, agotado ? "Agotado: no se ofrece" : s.descripcion || "");
+
+  const fila = el("div", { class: "fila" },
+    el("div", { class: "mini", onclick: alternar }, s.foto ? el("img", { src: "/" + s.foto, alt: "" }) : el("span", {}, "➕")),
+    el("button", { type: "button", class: "nombre", onclick: alternar }, titulo, bajada),
+    campoPrecio(null, s, "precio"),
+    interruptor(!agotado, agotado ? "Agotado" : "En venta", (on) => {
+      if (on) delete s.disponible;
+      else s.disponible = false;
+      marcar();
+      dibujar();
+    }, "Si está agotado no se ofrece, pero no se borra"),
+    el("button", { type: "button", class: "icono editar", title: abierto ? "Cerrar" : "Editar todo", onclick: alternar }, abierto ? "▴" : "✎"));
+
+  let detalle = null;
+  if (abierto) {
+    detalle = el("div", { class: "detalle" },
+      el("div", { class: "columnas" },
+        el("div", {},
+          campoTexto("Nombre", s, "nombre", { enfocar: porEnfocar === s, placeholder: "Ej.: Porción extra de papas", alCambiar: (v) => { titulo.textContent = v || "Sin nombre"; } }),
+          campoTexto("Descripción", s, "descripcion", {
+            largo: true,
+            placeholder: "Opcional. Ej.: Para compartir.",
+            alCambiar: (v) => { if (!agotado) bajada.textContent = v; },
+          })),
+        bloqueFoto(s, "foto", () => s.nombre, "➕", "Foto")),
+      el("div", { class: "acciones-producto" },
+        botonesMover(datos.sugerencias, i),
+        el("button", {
+          type: "button", class: "link peligro",
+          onclick: () => {
+            if (!confirm(`¿Borrar “${s.nombre || "esto"}” de “¿Le sumás algo?”?\n\nSi solo se terminó, mejor marcalo como Agotado.`)) return;
+            datos.sugerencias.splice(i, 1);
+            abiertos.delete(s);
+            marcar();
+            dibujar();
+          },
+        }, "Borrar")));
+  }
+  return el("article", { class: "producto" + (agotado ? " agotado" : "") + (abierto ? " abierto" : "") }, fila, detalle);
+}
+
+function bloqueSugerencias() {
+  const lista = datos.sugerencias;
+  const enVenta = lista.filter((s) => s.disponible !== false).length;
+  return el("section", { class: "bloque categoria sumas", hidden: $("#buscar").value.trim() !== "" },
+    el("div", { class: "cat-cabecera" },
+      el("span", { class: "emoji-fijo", "aria-hidden": "true" }, "➕"),
+      el("h2", { class: "titulo-bloque" }, "“¿Le sumás algo?”"),
+      el("span", { class: "cuenta" }, lista.length === 1 ? "1 cosa" : `${lista.length} cosas`)),
+    el("p", { class: "ayuda" }, "Es lo que se le ofrece al cliente cuando abre “Mi pedido”, antes de pedir. Lo que cargues acá aparece solo ahí (no en la carta), en este mismo orden. Ideal para agregados: extra queso, porción de papas, salsas, una bebida…"),
+    el("p", { class: "ayuda" }, enVenta
+      ? "✓ En “¿Le sumás algo?” se muestra solo lo de esta lista."
+      : "Lista vacía (o todo agotado): la carta elige sola qué sugerir, entre los productos de la carta."),
+    el("div", { class: "productos" }, lista.map(tarjetaSugerencia)),
+    el("button", {
+      type: "button", class: "agregar",
+      onclick: () => {
+        const nueva = { nombre: "" };
+        lista.push(nueva);
+        abiertos.add(nueva);
+        porEnfocar = nueva;
+        marcar();
+        dibujar();
+      },
+    }, "+ Agregar a “¿Le sumás algo?”"));
+}
+
 function coincide(p) {
   const filtro = $("#buscar").value.trim().toLowerCase();
   if (!filtro) return true;
@@ -642,6 +717,7 @@ function dibujar() {
   $("#contenido").replaceChildren(
     bloqueNegocio(),
     bloqueOfertas(),
+    bloqueSugerencias(),
     ...datos.categorias.map(tarjetaCategoria),
     el("button", {
       type: "button", class: "agregar categoria-nueva",
@@ -662,6 +738,7 @@ function dibujar() {
 // ---------- Guardar y publicar ----------
 
 const ORDEN = ["nombre", "descripcion", "precio", "variantes", "precio_anterior", "foto", "etiqueta", "destacado", "disponible"];
+const ORDEN_SUGERENCIA = ["nombre", "descripcion", "precio", "foto", "disponible"];
 const ORDEN_OFERTA = ["titulo", "descripcion", "precio", "precio_anterior", "foto", "etiqueta", "dias", "desde", "hasta", "inicio", "fin", "activa"];
 
 function limpiarOferta(o) {
@@ -673,6 +750,17 @@ function limpiarOferta(o) {
   for (const k of ["precio", "precio_anterior"]) if (r[k] == null) delete r[k];
   if (!r.dias || !r.dias.length || r.dias.length === 7) delete r.dias;
   if (r.activa !== false) delete r.activa;
+  return r;
+}
+
+function limpiarSugerencia(s) {
+  const r = {};
+  for (const k of ORDEN_SUGERENCIA) if (k in s) r[k] = s[k];
+  for (const k of Object.keys(s)) if (!(k in r)) r[k] = s[k];
+  for (const k of ["nombre", "descripcion"]) if (typeof r[k] === "string") r[k] = r[k].trim();
+  for (const k of ["descripcion", "foto"]) if (!r[k]) delete r[k];
+  if (r.precio == null) delete r.precio;
+  if (r.disponible !== false) delete r.disponible;
   return r;
 }
 
@@ -699,6 +787,8 @@ function limpiarProducto(p) {
 function preparar() {
   const copia = JSON.parse(JSON.stringify(datos));
   copia.ofertas = (copia.ofertas || []).map(limpiarOferta);
+  copia.sugerencias = (copia.sugerencias || []).map(limpiarSugerencia);
+  if (!copia.sugerencias.length) delete copia.sugerencias;
   for (const c of copia.categorias) {
     c.nombre = String(c.nombre || "").trim();
     c.productos = (c.productos || []).map(limpiarProducto);
@@ -715,6 +805,11 @@ function revisar(d) {
     if (o.precio == null) errores.push(`${nombre} no tiene precio.`);
     if (o.desde && o.hasta && o.desde === o.hasta) errores.push(`${nombre} empieza y termina a la misma hora.`);
     if (o.inicio && o.fin && o.inicio > o.fin) errores.push(`${nombre} termina antes de empezar: revisá las fechas.`);
+  });
+  (d.sugerencias || []).forEach((s, i) => {
+    const nombre = s.nombre ? `“${s.nombre}” (en ¿Le sumás algo?)` : `El agregado número ${i + 1} de “¿Le sumás algo?”`;
+    if (!s.nombre) errores.push(`${nombre} no tiene nombre. Escribile uno o borralo.`);
+    if (s.precio == null) errores.push(`${nombre} no tiene precio: sin precio no se puede sumar al pedido.`);
   });
   d.categorias.forEach((c, ci) => {
     const nombreCat = c.nombre || `la categoría número ${ci + 1}`;
@@ -814,6 +909,7 @@ async function iniciar() {
   datos.negocio ||= {};
   datos.categorias ||= [];
   datos.ofertas ||= [];
+  datos.sugerencias ||= [];
   dibujar();
   actualizarEstado();
   // Si queda abierto, el estado de las ofertas ("Se ve ahora", "Hoy desde…") se actualiza solo.

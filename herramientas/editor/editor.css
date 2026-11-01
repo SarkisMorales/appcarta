@@ -371,6 +371,9 @@ input:focus, textarea:focus, select:focus { outline: 2px solid var(--marron); ou
 
 .ofertas { border: 2px solid #FFD2C2; }
 .ofertas .cat-cabecera { border-bottom: 0; padding-bottom: 0; }
+.sumas { border: 2px solid #CFE8D5; }
+.sumas .cat-cabecera { border-bottom: 0; padding-bottom: 0; }
+.sumas .titulo-bloque { color: #1E6B3A; }
 .emoji-fijo { font-size: 26px; }
 .titulo-bloque { margin: 0; flex: 1; font-size: 20px; font-weight: 800; color: var(--rojo); }
 

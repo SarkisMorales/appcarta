@@ -27,6 +27,7 @@
   var negocio = {};
   var categorias = []; // categorías visibles, cada una con sus productos
   var ofertas = []; // ofertas de ahora (o de más tarde hoy) y productos rebajados
+  var extras = []; // lo que se carga en el editor para "¿Le sumás algo?" (solo aparece ahí)
   var items = {}; // todo lo que se puede abrir o pedir, por id
   var pedido = []; // [{ id, variante, cantidad }]
   var formulario = { nombre: "", modo: "retiro", direccion: "", aclaraciones: "" };
@@ -347,6 +348,30 @@
       });
     });
     ofertas = vigentes.concat(rebajados, masTarde);
+
+    // "¿Le sumás algo?" elegido a mano en el editor. No van en la carta ni en el buscador.
+    extras = (datos.sugerencias || []).filter(function (s) {
+      return s && s.nombre && s.disponible !== false && hayPrecio(s.precio);
+    }).map(function (s) {
+      var it = {
+        id: idUnico("sugerencia/" + (slug(s.nombre) || "extra")),
+        tipo: "sugerencia",
+        nombre: s.nombre,
+        descripcion: s.descripcion || "",
+        foto: s.foto || "",
+        emoji: s.emoji || "➕",
+        precio: Number(s.precio),
+        antes: null,
+        variantes: [],
+        etiqueta: "",
+        destacado: false,
+        categoria: "sugerencias",
+        vigente: true,
+        validez: ""
+      };
+      items[it.id] = it;
+      return it;
+    });
     firmaOfertas = calcularFirmaOfertas(t);
   }
 
@@ -727,7 +752,7 @@
     var candidatos = [];
     Object.keys(items).forEach(function (id, orden) {
       var it = items[id];
-      if (excluir.indexOf(id) !== -1 || !sePuedePedir(it)) return;
+      if (excluir.indexOf(id) !== -1 || !sePuedePedir(it) || it.tipo === "sugerencia") return;
       var puntos = 0;
       if (it.categoria !== categoriaBase) puntos += 3;
       if (!enPedido[it.categoria]) puntos += 2;
@@ -750,6 +775,13 @@
       if (elegidos.length < cuantos && elegidos.indexOf(c.it) === -1) elegidos.push(c.it);
     });
     return elegidos;
+  }
+
+  // Si en el editor se cargó algo para "¿Le sumás algo?", sale eso (en ese orden);
+  // si no, la carta elige sola. Lo que ya está en el pedido no se repite.
+  function sugerenciasPedido(enPedido) {
+    if (!extras.length) return sugerir(enPedido, null, 6);
+    return extras.filter(function (it) { return enPedido.indexOf(it.id) === -1; });
   }
 
   function sugerenciasHTML(lista, titulo) {
@@ -917,7 +949,7 @@
           }).join("") +
         "</ul>" +
         '<div class="total"><span>Total</span><strong>' + total + "</strong></div>" +
-        sugerenciasHTML(sugerir(idsEnPedido, null, 6), "¿Le sumás algo?") +
+        sugerenciasHTML(sugerenciasPedido(idsEnPedido), "¿Le sumás algo?") +
         (whatsapp ? formularioHTML() : "") +
         '<p class="hoja-nota">' + (whatsapp
           ? "Se abre WhatsApp con tu pedido ya escrito: solo tenés que enviarlo."

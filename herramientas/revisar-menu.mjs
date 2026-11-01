@@ -35,6 +35,11 @@ export async function revisarMenu(escribir = console.log) {
     else if (o.precio == null) avisos.push(`La oferta "${o.titulo}" no tiene precio.`);
     await revisarFoto(o.foto, o.titulo || "oferta sin nombre");
   }
+  for (const s of datos.sugerencias || []) {
+    if (!s.nombre) avisos.push("Hay algo sin nombre en \"¿Le sumás algo?\" (no se muestra).");
+    else if (s.precio == null) avisos.push(`"${s.nombre}" (en ¿Le sumás algo?) no tiene precio: no se muestra.`);
+    await revisarFoto(s.foto, s.nombre || "agregado sin nombre");
+  }
   const n = datos.negocio || {};
   await revisarFoto(n.portada, "portada");
   await revisarFoto(n.logo, "logo");

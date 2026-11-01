@@ -22,6 +22,8 @@ Antes de cada guardado queda una copia de lo anterior en `menu.anterior.json` (n
   (mejor uno por categoría).
 - **Mi pedido**: los clientes tocan "+" y arman su pedido con el total. Lo pueden mostrar al mozo en pantalla grande.
   La carta les sugiere sumar algo más ("Va bien con…", "¿Le sumás algo?").
+- **¿Le sumás algo?** (bloque ➕ del editor): elegís vos qué se ofrece al abrir "Mi pedido" (extra queso, papas,
+  salsas…). Eso aparece solo ahí, no en la carta, y en el orden que lo pongas. Si la lista está vacía, la carta sugiere sola.
 - **Pedir por WhatsApp** (Datos del local → Pedidos): el pedido te llega escrito a tu WhatsApp, con nombre, total
   y aclaraciones. Si hacés envíos, también pide la dirección. Viene apagado: lo prendés cuando quieras.
 - **Portada, logo y medios de pago**: en Datos del local.
