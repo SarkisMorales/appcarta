@@ -8,14 +8,14 @@
     "instagram": "morficlub",
     "portada": "fotos/prueba-portada.webp"
   },
-  "actualizado": "2026-10-30",
+  "actualizado": "2026-10-31",
   "ofertas": [
     {
-      "titulo": "Desayuno completo",
-      "descripcion": "Café con leche + 2 medialunas + jugo de naranja exprimido.",
-      "precio": 6500,
-      "precio_anterior": 7700,
-      "foto": "fotos/prueba-oferta-desayuno.webp",
+      "titulo": "Lomo 15 CM - Completo",
+      "descripcion": "200gr Lomo Veteado, Lechuga, Tomate, Huevo, Queso y Jamon.",
+      "precio": 17000,
+      "precio_anterior": 19900,
+      "foto": "fotos/desayuno-completo.webp",
       "etiqueta": "Combo",
       "dias": [
         "lun",
@@ -29,11 +29,11 @@
       "hasta": "11:30"
     },
     {
-      "titulo": "Combo almuerzo",
-      "descripcion": "Hamburguesa completa con papas + gaseosa o agua mineral.",
+      "titulo": "Docena Empanadas Carne",
+      "descripcion": "12 Unidades",
       "precio": 9900,
-      "precio_anterior": 11100,
-      "foto": "fotos/prueba-oferta-almuerzo.webp",
+      "precio_anterior": 12000,
+      "foto": "fotos/combo-almuerzo.webp",
       "etiqueta": "Combo",
       "dias": [
         "lun",
