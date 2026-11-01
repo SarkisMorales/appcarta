@@ -107,6 +107,20 @@
     return t.toLowerCase();
   }
 
+  // Todo el texto por el que se puede encontrar algo con el buscador.
+  function textoBusqueda(it, nombreCategoria) {
+    return normalizar([it.nombre, it.descripcion, it.etiqueta, nombreCategoria]
+      .concat(it.variantes.map(function (v) { return v.nombre; }))
+      .join(" "));
+  }
+
+  // "Lomos" -> "lomo", "empanadas" -> "empanada": así encuentra igual en singular o plural.
+  function palabrasBusqueda(texto) {
+    return normalizar(texto).replace(/[^a-z0-9ñ]+/g, " ").split(" ").filter(Boolean).map(function (p) {
+      return p.length > 3 && p.charAt(p.length - 1) === "s" ? p.slice(0, -1) : p;
+    });
+  }
+
   function slug(texto) {
     return normalizar(texto).replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
   }
@@ -287,6 +301,7 @@
           vigente: true,
           validez: ""
         };
+        it.buscar = textoBusqueda(it, c.nombre);
         items[it.id] = it;
         return it;
       });
@@ -320,6 +335,7 @@
         vigente: estado.vigente,
         validez: estado.texto
       };
+      it.buscar = textoBusqueda(it, "ofertas oferta promo");
       items[it.id] = it;
       (estado.vigente ? vigentes : masTarde).push(it);
     });
@@ -464,8 +480,7 @@
   }
 
   function tarjetaProducto(p) {
-    var texto = normalizar([p.nombre, p.descripcion, p.etiqueta].join(" "));
-    return '<article class="prod' + (p.destacado ? " prod-destacado" : "") + '" data-texto="' + esc(texto) + '">' +
+    return '<article class="prod' + (p.destacado ? " prod-destacado" : "") + '" data-texto="' + esc(p.buscar) + '">' +
       '<button class="prod-abrir" type="button" data-abrir="' + esc(p.id) + '">' +
         '<span class="prod-foto">' + fotoHTML(p, 600, 600, true) + sellos(p) +
           (p.destacado ? '<span class="sello sello-destacado">' + ICONO.estrella + "Recomendado</span>" : "") +
@@ -481,7 +496,9 @@
   }
 
   function tarjetaOferta(it, i) {
-    return '<article class="oferta' + (it.vigente ? "" : " oferta-mas-tarde") + '">' +
+    // Los productos rebajados ya aparecen en su categoría: al buscar no se repiten acá.
+    return '<article class="oferta' + (it.vigente ? "" : " oferta-mas-tarde") + '"' +
+      (it.tipo === "oferta" ? ' data-texto="' + esc(it.buscar) + '"' : "") + ">" +
       '<button class="oferta-abrir" type="button" data-abrir="' + esc(it.id) + '">' +
         '<span class="oferta-foto">' + fotoHTML(it, 640, 400, i > 0) + sellos(it) +
           (it.validez ? '<span class="sello sello-tiempo">' + ICONO.reloj + esc(it.validez) + "</span>" : "") +
@@ -594,20 +611,20 @@
   }
 
   function filtrar(texto) {
-    var palabras = normalizar(texto).split(/\s+/).filter(Boolean);
+    var palabras = palabrasBusqueda(texto);
+    var buscando = palabras.length > 0;
     var total = 0;
     cadaUno(carta.querySelectorAll(".seccion"), function (s) {
-      if (s.id === "ofertas") {
-        s.hidden = palabras.length > 0;
-        return;
-      }
       var visibles = 0;
-      cadaUno(s.querySelectorAll(".prod"), function (a) {
+      cadaUno(s.querySelectorAll(".prod, .oferta"), function (a) {
         var t = a.getAttribute("data-texto");
-        var ok = palabras.every(function (p) { return t.indexOf(p) !== -1; });
+        // Sin data-texto = producto rebajado del carrusel: se busca en su categoría.
+        var ok = !buscando || (t !== null && palabras.every(function (p) { return t.indexOf(p) !== -1; }));
         a.hidden = !ok;
         if (ok) visibles++;
       });
+      var deslizar = s.querySelector(".deslizar");
+      if (deslizar) deslizar.hidden = buscando;
       s.hidden = visibles === 0;
       total += visibles;
     });

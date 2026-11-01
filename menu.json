@@ -44,16 +44,7 @@
       "precio": 3900,
       "precio_anterior": 7800,
       "foto": "fotos/prueba-oferta-licuados.webp",
-      "etiqueta": "2x1",
-      "dias": [
-        "lun",
-        "mar",
-        "mie",
-        "jue",
-        "vie"
-      ],
-      "desde": "16:00",
-      "hasta": "19:00"
+      "etiqueta": "2x1"
     },
     {
       "titulo": "Happy hour",
@@ -125,13 +116,15 @@
           "precio": 2400,
           "precio_anterior": 3000,
           "foto": "fotos/prueba-medialunas.webp",
-          "etiqueta": "Promo"
+          "etiqueta": "Promo",
+          "disponible": false
         },
         {
           "nombre": "Tostado de jamón y queso",
           "descripcion": "En pan de miga, bien dorado. Viene con una medialuna de regalo.",
           "precio": 5200,
-          "foto": "fotos/prueba-tostado.webp"
+          "foto": "fotos/prueba-tostado.webp",
+          "disponible": false
         },
         {
           "nombre": "Alfajor de maicenaa",
