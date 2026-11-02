@@ -7,7 +7,6 @@
     "whatsapp": "2612641587",
     "instagram": "morficlub",
     "portada": "fotos/portada.webp",
-    "pagos": "Efectivo, Mercado Pago, Debito",
     "logo": "fotos/logo-5.webp"
   },
   "actualizado": "2026-11-02",
@@ -33,7 +32,7 @@
       "descripcion": "Llevá 2 licuados y pagá 1. Ideal para la merienda.",
       "precio": 3900,
       "precio_anterior": 7800,
-      "foto": "fotos/prueba-oferta-licuados.webp",
+      "foto": "fotos/2x1-en-licuados.webp",
       "etiqueta": "2x1"
     },
     {
