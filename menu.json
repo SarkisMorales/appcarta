@@ -1,12 +1,14 @@
 {
   "negocio": {
     "nombre": "MORFI - CLUB",
-    "subtitulo": "Cafetería · Minimarket",
+    "subtitulo": "Cafetería · Comida Rapida",
     "direccion": "Mendoza",
-    "horario": "Lunes a sábado de 8 a 23 h",
+    "horario": "Lunes a sábado de 7.00 a 23.00 h",
     "whatsapp": "2612641587",
     "instagram": "morficlub",
-    "portada": "fotos/portada.webp"
+    "portada": "fotos/portada.webp",
+    "pagos": "Efectivo, Mercado Pago, Debito",
+    "logo": "fotos/logo-5.webp"
   },
   "actualizado": "2026-11-02",
   "ofertas": [
