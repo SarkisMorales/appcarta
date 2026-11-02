@@ -16,15 +16,7 @@
       "precio": 17000,
       "precio_anterior": 19900,
       "foto": "fotos/desayuno-completo.webp",
-      "etiqueta": "Combo",
-      "dias": [
-        "mar",
-        "mie",
-        "jue",
-        "vie",
-        "sab",
-        "dom"
-      ]
+      "etiqueta": "Combo"
     },
     {
       "titulo": "Docena Empanadas Carne",
@@ -32,11 +24,7 @@
       "precio": 9900,
       "precio_anterior": 12000,
       "foto": "fotos/combo-almuerzo.webp",
-      "etiqueta": "Combo",
-      "dias": [
-        "sab",
-        "dom"
-      ]
+      "etiqueta": "Combo"
     },
     {
       "titulo": "2x1 en licuados",
