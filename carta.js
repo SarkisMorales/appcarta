@@ -1112,5 +1112,29 @@
     cerrarHoja(true);
   });
 
+  // Con una ventana abierta, deslizar el dedo mueve solo la ventana, nunca la carta de atrás
+  // (en iPhone y en algunos Android "overflow: hidden" no alcanza).
+  var toque = null;
+  document.addEventListener("touchstart", function (e) {
+    toque = hojaAbierta && e.touches.length === 1 ? { x: e.touches[0].clientX, y: e.touches[0].clientY } : null;
+  }, { passive: true });
+  document.addEventListener("touchmove", function (e) {
+    if (!hojaAbierta || !toque || e.touches.length !== 1 || !e.cancelable) return;
+    var dx = e.touches[0].clientX - toque.x;
+    var dy = e.touches[0].clientY - toque.y;
+    var el = e.target;
+    if (!hojaCaja.contains(el)) { e.preventDefault(); return; } // el fondo oscuro no se desliza
+    if (Math.abs(dx) > Math.abs(dy)) return; // las filas que se deslizan de costado ("¿Le sumás algo?")
+    // Se deja si algo de la ventana (o un cuadro de texto adentro) todavía puede moverse para ese lado.
+    for (; el && el !== document.body; el = el.parentNode) {
+      if (el.scrollHeight > el.clientHeight + 1 && /auto|scroll/.test(getComputedStyle(el).overflowY)) {
+        if (dy > 0 && el.scrollTop > 0) return;
+        if (dy < 0 && el.scrollTop + el.clientHeight < el.scrollHeight - 1) return;
+      }
+      if (el === hojaCaja) break;
+    }
+    e.preventDefault();
+  }, { passive: false });
+
   cargar();
 })();

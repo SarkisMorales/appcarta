@@ -23,7 +23,7 @@
 *, *::before, *::after { box-sizing: border-box; }
 
 html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
-html.sin-scroll { overflow: hidden; }
+html.sin-scroll, html.sin-scroll body { overflow: hidden; overscroll-behavior: none; }
 
 body {
   margin: 0;
@@ -592,6 +592,7 @@ a.dato span { text-decoration: underline; text-decoration-color: rgba(252, 233, 
   background: rgba(20, 10, 4, 0.6);
   opacity: 0;
   transition: opacity 0.2s;
+  touch-action: none;
 }
 .hoja.abierta .hoja-fondo { opacity: 1; }
 .hoja-caja {
