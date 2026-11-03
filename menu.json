@@ -7,7 +7,13 @@
     "whatsapp": "2612641587",
     "instagram": "morficlub",
     "portada": "fotos/portada.webp",
-    "logo": "fotos/logo-5.webp"
+    "logo": "fotos/logo-6.webp",
+    "logo_ajuste": {
+      "zoom": 1.2,
+      "x": 49.7,
+      "y": 11.8,
+      "proporcion": 1.5009
+    }
   },
   "actualizado": "2026-11-02",
   "ofertas": [
@@ -33,6 +39,12 @@
       "precio": 3900,
       "precio_anterior": 7800,
       "foto": "fotos/2x1-en-licuados.webp",
+      "foto_ajuste": {
+        "zoom": 0.617,
+        "x": 50,
+        "y": 100,
+        "proporcion": 0.9138
+      },
       "etiqueta": "2x1"
     },
     {
@@ -48,7 +60,8 @@
         "sab"
       ],
       "desde": "19:00",
-      "hasta": "22:00"
+      "hasta": "22:00",
+      "activa": false
     }
   ],
   "categorias": [
@@ -70,27 +83,51 @@
               "precio": 3200
             }
           ],
-          "foto": "fotos/prueba-cafe-con-leche.webp",
+          "foto": "fotos/cafe-con-leche-2.webp",
+          "foto_ajuste": {
+            "zoom": 0.9,
+            "x": 50,
+            "y": 50,
+            "proporcion": 1.5009
+          },
           "etiqueta": "Más pedido",
           "destacado": true
         },
         {
           "nombre": "Cortado",
           "descripcion": "Espresso con un toque de leche.  asdasasd",
-          "precio": 55000,
-          "foto": "fotos/cortado-3.webp"
+          "precio": 2800,
+          "foto": "fotos/cortado-4.webp",
+          "foto_ajuste": {
+            "zoom": 0.891,
+            "x": 50,
+            "y": 50,
+            "proporcion": 1.7738
+          }
         },
         {
           "nombre": "Submarino",
           "descripcion": "Leche caliente con barra de chocolate para derretir.",
           "precio": 3500,
-          "foto": "fotos/prueba-submarino.webp"
+          "foto": "fotos/submarino.webp",
+          "foto_ajuste": {
+            "zoom": 0.75,
+            "x": 50,
+            "y": 50,
+            "proporcion": 0.75
+          }
         },
         {
-          "nombre": "Capuchino italiano",
-          "descripcion": "Este producto está agotado: no aparece en la carta porque tiene disponible: false.",
+          "nombre": "Capuchino Italiano",
+          "descripcion": "Leche caliente con café y cremosa capa de espuma con cacao en polvo",
           "precio": 3800,
-          "foto": "fotos/prueba-capuchino.webp"
+          "foto": "fotos/capuchino-italiano.webp",
+          "foto_ajuste": {
+            "zoom": 0.67,
+            "x": 50,
+            "y": 50,
+            "proporcion": 0.6663
+          }
         }
       ]
     },
@@ -104,21 +141,32 @@
           "descripcion": "De manteca, recién horneadas.",
           "precio": 2400,
           "precio_anterior": 3000,
-          "foto": "fotos/prueba-medialunas.webp",
-          "etiqueta": "Promo",
-          "disponible": false
+          "foto": "fotos/medialunas-x3.webp",
+          "etiqueta": "Promo"
         },
         {
           "nombre": "Tostado de jamón y queso",
           "descripcion": "En pan de miga, bien dorado. Viene con una medialuna de regalo.",
           "precio": 5200,
-          "foto": "fotos/prueba-tostado.webp",
-          "disponible": false
+          "foto": "fotos/tostado-de-jamon-y-queso.webp",
+          "foto_ajuste": {
+            "zoom": 0.69,
+            "x": 50,
+            "y": 50,
+            "proporcion": 1.7778
+          }
         },
         {
           "nombre": "Alfajor de maicenaa",
           "descripcion": "Casero, con dulce de leche y coco rallado.",
-          "precio": 50000
+          "precio": 1000,
+          "foto": "fotos/alfajor-de-maicenaa.webp",
+          "foto_ajuste": {
+            "zoom": 0.77,
+            "x": 50,
+            "y": 50,
+            "proporcion": 1.5009
+          }
         }
       ]
     },
@@ -128,40 +176,60 @@
       "emoji": "🍔",
       "productos": [
         {
-          "nombre": "Hamburguesa completa con papas",
-          "descripcion": "Medallón de carne de 180 g, cheddar, lechuga, tomate y papas fritas.",
-          "precio": 9800,
-          "foto": "fotos/prueba-hamburguesa.webp",
+          "nombre": "Hamburguesa Completa",
+          "descripcion": "Medallón de carne de 180 g, cheddar, lechuga, tomate.",
+          "precio": 8500,
+          "foto": "fotos/hamburguesa-completa.webp",
+          "foto_ajuste": {
+            "zoom": 0.96,
+            "x": 50,
+            "y": 50,
+            "proporcion": 1.5009
+          },
           "etiqueta": "Nuevo",
           "destacado": true
         },
         {
-          "nombre": "Milanesa con papas fritas",
-          "descripcion": "Milanesa de ternera bien crocante, papas fritas caseras y limón.",
+          "nombre": "Milanesa a Caballo con ensalada",
+          "descripcion": "Milanesa de ternera bien crocante con 2 huevos, Lechuga y Tomate",
           "variantes": [
             {
-              "nombre": "Simple",
-              "precio": 11500
-            },
-            {
-              "nombre": "Napolitana",
+              "nombre": "Completa",
               "precio": 13200
             }
           ],
-          "foto": "fotos/prueba-milanesa.webp"
+          "foto": "fotos/milanesa-con-papas-fritas.webp",
+          "foto_ajuste": {
+            "zoom": 0.65,
+            "x": 55.4,
+            "y": 51.6,
+            "proporcion": 1.7778
+          }
         },
         {
-          "nombre": "Ensalada César",
-          "descripcion": "Lechuga fresca, pollo grillado, croutons, parmesano y aderezo César.",
+          "nombre": "Pizza Especial con Morrón",
+          "descripcion": "Pizza Especial con 200gr de Queso, Jamón, morrón y aceitunas",
           "precio": 8900,
-          "foto": "fotos/prueba-ensalada.webp",
+          "foto": "fotos/ensalada-cesar-2.webp",
+          "foto_ajuste": {
+            "zoom": 0.711,
+            "x": 50,
+            "y": 50,
+            "proporcion": 1.7738
+          },
           "etiqueta": "Liviano"
         },
         {
-          "nombre": "Tostadas con palta y huevo",
-          "descripcion": "Pan de masa madre, palta, huevo y semillas.",
-          "precio": 7200,
-          "foto": "fotos/prueba-tostadas-palta.webp"
+          "nombre": "Choripan con Chimichurri",
+          "descripcion": "Chorizo Especial de cerdo, con salteado de verduras y chimichurri, con pan francés",
+          "precio": 7900,
+          "foto": "fotos/tostadas-con-palta-y-huevo.webp",
+          "foto_ajuste": {
+            "zoom": 0.61,
+            "x": 50,
+            "y": 50,
+            "proporcion": 1.7778
+          }
         }
       ]
     },
@@ -189,7 +257,8 @@
           "precio": 4600,
           "foto": "fotos/prueba-brownie.webp"
         }
-      ]
+      ],
+      "disponible": false
     },
     {
       "id": "bebidas-frias",
@@ -197,32 +266,39 @@
       "emoji": "🥤",
       "productos": [
         {
-          "nombre": "Licuado de banana",
-          "descripcion": "Con leche o con agua. 400 ml.",
-          "precio": 3900,
-          "foto": "fotos/prueba-licuado-banana.webp",
+          "nombre": "Levite 500ML",
+          "descripcion": "Agua Saborizada Levite 500ML",
+          "precio": 1900,
+          "foto": "fotos/licuado-de-banana.webp",
           "etiqueta": "Nuevo"
         },
         {
-          "nombre": "Jugo de naranja exprimido",
-          "descripcion": "Naranjas exprimidas en el momento. 350 ml.",
-          "precio": 3600,
-          "foto": "fotos/prueba-jugo-naranja.webp"
+          "nombre": "Coca Cola 500ML",
+          "descripcion": "Coca Cola 500ML",
+          "precio": 2000,
+          "foto": "fotos/jugo-de-naranja-exprimido.webp"
         },
         {
           "nombre": "Agua mineral 500 ml",
-          "descripcion": "Con o sin gas.",
-          "precio": 1300,
-          "foto": "fotos/prueba-agua.webp"
+          "descripcion": "Villavicencio, Eco",
+          "precio": 1800,
+          "foto": "fotos/agua-mineral-500-ml.webp"
         }
       ]
     }
   ],
   "sugerencias": [
     {
-      "nombre": "asasas",
-      "precio": 12222,
-      "foto": "fotos/asasas.webp"
+      "nombre": "Pancho",
+      "descripcion": "Completo",
+      "precio": 3500,
+      "foto": "fotos/asasas.webp",
+      "foto_ajuste": {
+        "zoom": 0.735,
+        "x": 50,
+        "y": 50,
+        "proporcion": 1.7582
+      }
     }
   ]
 }
