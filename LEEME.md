@@ -33,6 +33,10 @@ Antes de cada guardado queda una copia de lo anterior en `menu.anterior.json` (n
 Para ver cómo se ve la carta en otro momento (por ejemplo, a la hora de una oferta), agregá al final de la dirección
 `?ahora=2026-11-02T18:30` (año-mes-día, T, hora:minutos).
 
+**Acomodar una foto**: al subirla se abre sola la ventana "Acomodar foto" (después, botón **↔ Acomodar** o clic sobre la foto).
+Arrastrás la foto para moverla y con la ruedita del mouse o la barra la acercás o alejás; abajo ves cómo queda en
+cada lugar de la carta. El archivo no se toca: en `menu.json` queda `"foto_ajuste"` (o `"portada_ajuste"` / `"logo_ajuste"`).
+
 Las fotos que empiezan con `prueba-` (en `fotos/`) son fotos de uso libre (CC0) para probar cómo se ve.
 Cuando puedas, cambialas por fotos de tus productos: la gente compra lo que ve.
 

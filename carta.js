@@ -71,6 +71,29 @@
     return n !== null && n !== undefined && n !== "" && isFinite(Number(n));
   }
 
+  // Cómo se acomodó la foto en el editor (zoom y posición). null = como venga (centrada).
+  function ajusteDe(a) {
+    if (!a || typeof a !== "object") return null;
+    var r = Number(a.proporcion);
+    if (!(r > 0.05 && r < 20)) return null;
+    function entre(v, min, max, porDefecto) {
+      v = Number(v);
+      return isFinite(v) ? Math.min(max, Math.max(min, v)) : porDefecto;
+    }
+    return { zoom: entre(a.zoom, 0.1, 5, 1), x: entre(a.x, 0, 100, 50), y: entre(a.y, 0, 100, 50), proporcion: r };
+  }
+
+  // Foto acomodada: la cuenta del tamaño y la posición la hace estilos.css (.encuadre).
+  // Si la foto quedó más chica que el recuadro, atrás va la misma foto borrosa de relleno.
+  function fotoAjustada(src, aj, atributos) {
+    var img = '<img src="' + esc(src) + '" ' + atributos + ' onerror="this.style.display=\'none\'">';
+    if (!aj) return img;
+    var estilo = "--r:" + aj.proporcion + ";--z:" + aj.zoom + ";--x:" + aj.x / 100 + ";--y:" + aj.y / 100;
+    return '<span class="encuadre" style="' + estilo + '">' +
+      (aj.zoom < 1 ? '<img class="relleno" src="' + esc(src) + '" alt="" aria-hidden="true" onerror="this.style.display=\'none\'">' : "") +
+      img + "</span>";
+  }
+
   // 15000 -> "15.000"
   function miles(n) {
     return String(Math.abs(Math.round(Number(n)))).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
@@ -288,6 +311,7 @@
           nombre: p.nombre,
           descripcion: p.descripcion || "",
           foto: p.foto || "",
+          ajuste: ajusteDe(p.foto_ajuste),
           emoji: c.emoji || "🍽️",
           precio: hayPrecio(p.precio) ? Number(p.precio) : null,
           antes: hayPrecio(p.precio_anterior) ? Number(p.precio_anterior) : null,
@@ -326,6 +350,7 @@
         nombre: o.titulo,
         descripcion: o.descripcion || "",
         foto: o.foto || "",
+        ajuste: ajusteDe(o.foto_ajuste),
         emoji: "🔥",
         precio: hayPrecio(o.precio) ? Number(o.precio) : null,
         antes: hayPrecio(o.precio_anterior) ? Number(o.precio_anterior) : null,
@@ -359,6 +384,7 @@
         nombre: s.nombre,
         descripcion: s.descripcion || "",
         foto: s.foto || "",
+        ajuste: ajusteDe(s.foto_ajuste),
         emoji: s.emoji || "➕",
         precio: Number(s.precio),
         antes: null,
@@ -427,13 +453,13 @@
     $("subtitulo").textContent = negocio.subtitulo || "";
 
     var logo = $("logo");
-    if (negocio.logo) logo.innerHTML = '<img src="' + esc(negocio.logo) + '" alt="" width="84" height="84">';
+    if (negocio.logo) logo.innerHTML = fotoAjustada(negocio.logo, ajusteDe(negocio.logo_ajuste), 'alt="" width="84" height="84"');
     else logo.textContent = iniciales(nombre);
 
     var portada = $("portada");
     var foto = $("portada-foto");
     if (negocio.portada) {
-      foto.innerHTML = '<img src="' + esc(negocio.portada) + '" alt="" width="1200" height="600" fetchpriority="high" decoding="async">';
+      foto.innerHTML = fotoAjustada(negocio.portada, ajusteDe(negocio.portada_ajuste), 'alt="" width="1200" height="600" fetchpriority="high" decoding="async"');
       portada.className = "portada con-foto";
     } else {
       foto.innerHTML = "";
@@ -472,8 +498,8 @@
   function fotoHTML(it, ancho, alto, diferida, alt) {
     return '<span class="sin-foto" aria-hidden="true">' + esc(it.emoji) + "</span>" +
       (it.foto
-        ? '<img src="' + esc(it.foto) + '" alt="' + esc(alt || "") + '" width="' + ancho + '" height="' + alto + '"' +
-          (diferida ? ' loading="lazy"' : "") + ' decoding="async" onerror="this.style.display=\'none\'">'
+        ? fotoAjustada(it.foto, it.ajuste, 'alt="' + esc(alt || "") + '" width="' + ancho + '" height="' + alto + '"' +
+          (diferida ? ' loading="lazy"' : "") + ' decoding="async"')
         : "");
   }
 

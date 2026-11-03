@@ -235,9 +235,207 @@ function botonesMover(lista, i) {
     el("button", { type: "button", class: "icono", title: "Bajar", disabled: i === lista.length - 1, onclick: () => mover(i + 1) }, "↓"));
 }
 
+// ---------- Acomodar fotos (zoom y posición) ----------
+// No se toca el archivo: en menu.json queda, al lado de la foto, cómo acomodarla
+// (ej.: "foto_ajuste": { "zoom": 1.3, "x": 40, "y": 55, "proporcion": 1.5 }).
+// zoom 1 = la foto llena justo el recuadro; x / y = posición de 0 a 100 (50 = centrada);
+// proporcion = ancho / alto de la foto. La carta hace la misma cuenta (estilos.css, .encuadre).
+
+const ZOOM_MAXIMO = 4;
+
+// Dónde se ve cada foto en la carta. La primera forma es la principal (la del recuadro grande).
+const FORMAS = {
+  producto: (p) => [
+    p.destacado ? { nombre: "En la carta (recomendado)", proporcion: 16 / 9 } : { nombre: "En la carta", proporcion: 1 },
+    { nombre: "Al tocarlo", proporcion: 4 / 3 },
+    p.precio_anterior != null ? { nombre: "En ofertas", proporcion: 16 / 10 } : null,
+  ].filter(Boolean),
+  oferta: () => [{ nombre: "En la carta", proporcion: 16 / 10 }, { nombre: "Al tocarla", proporcion: 4 / 3 }],
+  sugerencia: () => [{ nombre: "En el pedido", proporcion: 1 }, { nombre: "Al tocarla", proporcion: 4 / 3 }],
+  portada: () => [{ nombre: "En el celular", proporcion: 390 / 230 }, { nombre: "En la computadora", proporcion: 1280 / 230 }],
+  logo: () => [{ nombre: "Logo", proporcion: 1, redondo: true }],
+};
+
+const claveAjuste = (clave) => clave + "_ajuste";
+
+function ajusteValido(a) {
+  return a && typeof a === "object" && Number(a.proporcion) > 0 ? a : null;
+}
+
+// Pone (o actualiza) en un "span.encuadre" los números que usa el CSS.
+function aplicarAjuste(caja, a) {
+  caja.style.setProperty("--r", a.proporcion);
+  caja.style.setProperty("--z", a.zoom);
+  caja.style.setProperty("--x", a.x / 100);
+  caja.style.setProperty("--y", a.y / 100);
+  caja.classList.toggle("achicada", a.zoom < 1);
+}
+
+// La foto como se va a ver en la carta (con su zoom y posición, si tiene).
+function imagenEncuadrada(src, ajuste) {
+  const a = ajusteValido(ajuste);
+  if (!a) return el("img", { src: "/" + src, alt: "" });
+  const caja = el("span", { class: "encuadre" },
+    el("img", { class: "relleno", src: "/" + src, alt: "" }),
+    el("img", { src: "/" + src, alt: "" }));
+  aplicarAjuste(caja, a);
+  return caja;
+}
+
+// Zoom con el que la foto entra entera en un recuadro de esa proporción.
+function zoomFotoEntera(proporcionFoto, proporcionMarco) {
+  return Math.min(proporcionMarco / proporcionFoto, proporcionFoto / proporcionMarco);
+}
+
+function abrirEncuadre(obj, clave, formas) {
+  const src = obj[clave];
+  if (!src) return;
+  const lista = formas();
+  const principal = lista[0];
+  const anterior = ajusteValido(obj[claveAjuste(clave)]);
+  const a = anterior ? { ...anterior } : { zoom: 1, x: 50, y: 50, proporcion: 1 };
+  let cargada = false;
+
+  const cajas = [];
+  const marco = (forma, grande) => {
+    const caja = el("span", { class: "encuadre" },
+      el("img", { class: "relleno", src: "/" + src, alt: "" }),
+      el("img", { src: "/" + src, alt: "" }));
+    cajas.push(caja);
+    return el("div", {
+      class: "marco" + (grande ? " marco-principal" : "") + (forma.redondo ? " redondo" : ""),
+      style: `aspect-ratio: ${forma.proporcion}`,
+    }, caja);
+  };
+  // El ancho va en el recuadro de afuera: así no depende de la foto.
+  const figura = (forma, recuadro, grande) => el("figure", {
+    class: "forma",
+    style: `width: min(100%, ${Math.round((grande ? 340 : 84) * forma.proporcion)}px)`,
+  }, recuadro, el("figcaption", {}, forma.nombre));
+
+  const principalMarco = marco(principal, true);
+  principalMarco.tabIndex = 0;
+  principalMarco.title = "Arrastrá para mover · ruedita para acercar o alejar";
+
+  const zoomMinimo = () => Math.min(0.5, zoomFotoEntera(a.proporcion, principal.proporcion) * 0.8);
+  const barra = el("input", { type: "range", class: "zoom-barra", min: 0.5, max: ZOOM_MAXIMO, step: 0.01, value: a.zoom, "aria-label": "Zoom" });
+  const listo = el("button", { type: "button", class: "btn principal", disabled: true }, "Listo");
+
+  const limitar = (v, min, max) => Math.min(max, Math.max(min, v));
+  function refrescar() {
+    a.zoom = limitar(a.zoom, zoomMinimo(), ZOOM_MAXIMO);
+    a.x = limitar(a.x, 0, 100);
+    a.y = limitar(a.y, 0, 100);
+    for (const c of cajas) aplicarAjuste(c, a);
+    barra.min = zoomMinimo();
+    barra.value = a.zoom;
+  }
+
+  // Mueve la foto "dx, dy" píxeles en el recuadro grande (como si la arrastraras).
+  function mover(dx, dy, desde = a) {
+    const { width: cw, height: ch } = principalMarco.getBoundingClientRect();
+    const ancho = Math.max(cw, ch * a.proporcion) * a.zoom;
+    const alto = ancho / a.proporcion;
+    // La foto queda en: izquierda = (ancho del marco − ancho de la foto) × x. Se despeja x.
+    if (Math.abs(cw - ancho) > 0.5) a.x = desde.x + (100 * dx) / (cw - ancho);
+    if (Math.abs(ch - alto) > 0.5) a.y = desde.y + (100 * dy) / (ch - alto);
+    refrescar();
+  }
+
+  function zoom(nuevo) {
+    a.zoom = nuevo;
+    refrescar();
+  }
+
+  let arrastre = null;
+  principalMarco.addEventListener("pointerdown", (e) => {
+    if (e.button !== 0) return;
+    principalMarco.setPointerCapture(e.pointerId);
+    arrastre = { px: e.clientX, py: e.clientY, x: a.x, y: a.y };
+    principalMarco.classList.add("arrastrando");
+  });
+  principalMarco.addEventListener("pointermove", (e) => {
+    if (arrastre) mover(e.clientX - arrastre.px, e.clientY - arrastre.py, arrastre);
+  });
+  const soltar = () => { arrastre = null; principalMarco.classList.remove("arrastrando"); };
+  principalMarco.addEventListener("pointerup", soltar);
+  principalMarco.addEventListener("pointercancel", soltar);
+  principalMarco.addEventListener("wheel", (e) => {
+    e.preventDefault();
+    zoom(a.zoom * Math.exp(-e.deltaY * 0.0015));
+  }, { passive: false });
+  principalMarco.addEventListener("keydown", (e) => {
+    const paso = e.shiftKey ? 30 : 8;
+    const teclas = {
+      ArrowLeft: () => mover(-paso, 0), ArrowRight: () => mover(paso, 0),
+      ArrowUp: () => mover(0, -paso), ArrowDown: () => mover(0, paso),
+      "+": () => zoom(a.zoom * 1.1), "-": () => zoom(a.zoom / 1.1),
+    };
+    if (teclas[e.key]) { e.preventDefault(); teclas[e.key](); }
+  });
+  barra.addEventListener("input", () => zoom(Number(barra.value)));
+
+  // La proporción real de la foto se sabe recién cuando termina de cargar.
+  const imgPrincipal = principalMarco.querySelector("img:not(.relleno)");
+  const alCargar = () => {
+    if (!imgPrincipal.naturalWidth) return;
+    a.proporcion = Math.round((imgPrincipal.naturalWidth / imgPrincipal.naturalHeight) * 10000) / 10000;
+    cargada = true;
+    listo.disabled = false;
+    refrescar();
+  };
+  if (imgPrincipal.complete) alCargar();
+  else imgPrincipal.addEventListener("load", alCargar);
+  imgPrincipal.addEventListener("error", () => avisar("No pude abrir la foto para acomodarla.", "error"));
+
+  const otras = lista.slice(1);
+  const dialogo = el("dialog", { class: "dialogo dialogo-encuadre" },
+    el("h2", {}, "Acomodar foto"),
+    el("p", { class: "ayuda" }, "Arrastrá la foto con el mouse para moverla. Con la ruedita del mouse o la barra la acercás o alejás. Si la alejás de más, el borde se rellena con la misma foto borrosa."),
+    figura(principal, principalMarco, true),
+    el("div", { class: "zoom" },
+      el("button", { type: "button", class: "icono", title: "Alejar", onclick: () => zoom(a.zoom / 1.15) }, "−"),
+      barra,
+      el("button", { type: "button", class: "icono", title: "Acercar", onclick: () => zoom(a.zoom * 1.15) }, "+")),
+    el("div", { class: "zoom-atajos" },
+      el("button", { type: "button", class: "btn secundario chico", onclick: () => { a.zoom = zoomFotoEntera(a.proporcion, principal.proporcion); a.x = 50; a.y = 50; refrescar(); } }, "Ver la foto entera"),
+      el("button", { type: "button", class: "btn secundario chico", onclick: () => { a.zoom = 1; a.x = 50; a.y = 50; refrescar(); } }, "Centrar y llenar")),
+    otras.length
+      ? el("div", { class: "otras-formas" },
+          el("span", { class: "rotulo" }, "Así se ve en otros lugares de la carta:"),
+          el("div", { class: "otras-fila" }, otras.map((f) => figura(f, marco(f, false), false))))
+      : null,
+    el("div", { class: "acciones-dialogo" },
+      el("button", { type: "button", class: "btn secundario", onclick: () => dialogo.close() }, "Cancelar"),
+      listo));
+
+  listo.addEventListener("click", () => {
+    if (!cargada) return;
+    const k = claveAjuste(clave);
+    const redondo = (v, d) => Math.round(v * d) / d;
+    const nuevo = { zoom: redondo(a.zoom, 1000), x: redondo(a.x, 10), y: redondo(a.y, 10), proporcion: a.proporcion };
+    if (Math.abs(nuevo.zoom - 1) < 0.005 && Math.abs(nuevo.x - 50) < 0.5 && Math.abs(nuevo.y - 50) < 0.5) delete obj[k];
+    else obj[k] = nuevo;
+    if (JSON.stringify(obj[k] || null) !== JSON.stringify(anterior || null)) {
+      marcar();
+      dibujar();
+      avisar("Foto acomodada. Acordate de guardar.");
+    }
+    dialogo.close();
+  });
+  dialogo.addEventListener("close", () => dialogo.remove());
+
+  document.body.append(dialogo);
+  dialogo.showModal();
+  refrescar();
+  principalMarco.focus();
+}
+
 // Foto de un producto o logo del local: se achica sola en la notebook y queda en la carpeta fotos.
-function bloqueFoto(obj, clave, nombreSugerido, alternativa, rotulo) {
+// "formas": dónde se ve en la carta (ver FORMAS), para poder acomodarla con zoom y posición.
+function bloqueFoto(obj, clave, nombreSugerido, alternativa, rotulo, formas) {
   const estado = el("small", { class: "estado-foto" }, obj[clave] ? "" : "Sin foto: se muestra el emoji.");
+  const acomodar = () => abrirEncuadre(obj, clave, formas);
 
   async function subir(archivo) {
     if (!archivo) return;
@@ -250,30 +448,35 @@ function bloqueFoto(obj, clave, nombreSugerido, alternativa, rotulo) {
       const nombre = nombreSugerido() || archivo.name.replace(/\.[^.]+$/, "");
       const r = await pedir("/api/foto?nombre=" + encodeURIComponent(nombre), { method: "POST", body: archivo });
       obj[clave] = r.foto;
+      delete obj[claveAjuste(clave)]; // foto nueva: arranca centrada
       marcar();
       dibujar();
-      avisar(`Foto lista (${r.kb} KB). Acordate de guardar.`);
+      avisar(`Foto lista (${r.kb} KB). Acomodala y acordate de guardar.`);
+      acomodar();
     } catch (e) {
       estado.textContent = e.message;
     }
   }
 
+  const forma = obj[clave] ? formas()[0] : null;
   const archivo = el("input", { type: "file", accept: "image/*", hidden: true, onchange: (e) => subir(e.target.files[0]) });
   const vista = el("div", {
-    class: "foto-vista",
-    title: "Podés arrastrar una foto acá",
+    class: "foto-vista" + (forma ? " con-foto" : "") + (forma && forma.redondo ? " redondo" : ""),
+    style: forma ? `aspect-ratio: ${forma.proporcion}` : null,
+    title: obj[clave] ? "Tocá para acomodar la foto (zoom y posición). También podés arrastrar otra foto acá." : "Podés arrastrar una foto acá",
     ondragover: (e) => { e.preventDefault(); vista.classList.add("arrastrando"); },
     ondragleave: () => vista.classList.remove("arrastrando"),
     ondrop: (e) => { e.preventDefault(); vista.classList.remove("arrastrando"); subir(e.dataTransfer.files[0]); },
-    onclick: () => archivo.click(),
-  }, obj[clave] ? el("img", { src: "/" + obj[clave], alt: "" }) : el("span", {}, alternativa));
+    onclick: () => (obj[clave] ? acomodar() : archivo.click()),
+  }, obj[clave] ? imagenEncuadrada(obj[clave], obj[claveAjuste(clave)]) : el("span", {}, alternativa));
 
   return el("div", { class: "foto" },
     el("span", { class: "rotulo" }, rotulo),
     vista,
     el("div", { class: "botones-foto" },
+      obj[clave] ? el("button", { type: "button", class: "btn secundario chico", onclick: acomodar }, "↔ Acomodar") : null,
       el("button", { type: "button", class: "btn secundario chico", onclick: () => archivo.click() }, obj[clave] ? "Cambiar foto" : "Subir foto"),
-      obj[clave] ? el("button", { type: "button", class: "link peligro", onclick: () => { delete obj[clave]; marcar(); dibujar(); } }, "Quitar") : null),
+      obj[clave] ? el("button", { type: "button", class: "link peligro", onclick: () => { delete obj[clave]; delete obj[claveAjuste(clave)]; marcar(); dibujar(); } }, "Quitar") : null),
     estado,
     archivo);
 }
@@ -324,8 +527,8 @@ function bloqueNegocio() {
           campoTexto("Medios de pago", n, "pagos", { placeholder: "Ej.: Efectivo · Débito · Mercado Pago", ayuda: "Opcional. Aparece arriba y al pie de la carta." })),
         pedidos),
       el("div", { class: "fotos-local" },
-        bloqueFoto(n, "portada", () => "portada", "Sin portada", "Foto de portada (arriba de todo)"),
-        bloqueFoto(n, "logo", () => "logo", "Sin logo", "Logo (opcional)"))));
+        bloqueFoto(n, "portada", () => "portada", "Sin portada", "Foto de portada (arriba de todo)", FORMAS.portada),
+        bloqueFoto(n, "logo", () => "logo", "Sin logo", "Logo (opcional)", FORMAS.logo))));
 }
 
 // ---------- Ofertas ----------
@@ -382,7 +585,7 @@ function tarjetaOferta(o, i) {
   refrescarAhorro();
 
   const fila = el("div", { class: "fila" },
-    el("div", { class: "mini", onclick: alternar }, o.foto ? el("img", { src: "/" + o.foto, alt: "" }) : el("span", {}, "🔥")),
+    el("div", { class: "mini", onclick: alternar }, o.foto ? imagenEncuadrada(o.foto, o.foto_ajuste) : el("span", {}, "🔥")),
     el("button", { type: "button", class: "nombre", onclick: alternar }, titulo, estado),
     campoPrecio(null, o, "precio", { alCambiar: refrescarAhorro }),
     interruptor(o.activa !== false, o.activa === false ? "Pausada" : "Activa", (on) => {
@@ -413,7 +616,7 @@ function tarjetaOferta(o, i) {
             campoHorario("Empieza el", o, "inicio", "date", refrescarEstado),
             campoHorario("Termina el", o, "fin", "date", refrescarEstado)),
           el("small", { class: "ayuda" }, "Fechas opcionales, para promos de una semana o un mes. Después de la fecha final deja de verse sola.")),
-        bloqueFoto(o, "foto", () => o.titulo, "🔥", "Foto (la más tentadora que tengas)")),
+        bloqueFoto(o, "foto", () => o.titulo, "🔥", "Foto (la más tentadora que tengas)", FORMAS.oferta)),
       el("div", { class: "acciones-producto" },
         botonesMover(datos.ofertas, i),
         el("button", {
@@ -462,7 +665,7 @@ function tarjetaSugerencia(s, i) {
   const bajada = el("small", {}, agotado ? "Agotado: no se ofrece" : s.descripcion || "");
 
   const fila = el("div", { class: "fila" },
-    el("div", { class: "mini", onclick: alternar }, s.foto ? el("img", { src: "/" + s.foto, alt: "" }) : el("span", {}, "➕")),
+    el("div", { class: "mini", onclick: alternar }, s.foto ? imagenEncuadrada(s.foto, s.foto_ajuste) : el("span", {}, "➕")),
     el("button", { type: "button", class: "nombre", onclick: alternar }, titulo, bajada),
     campoPrecio(null, s, "precio"),
     interruptor(!agotado, agotado ? "Agotado" : "En venta", (on) => {
@@ -484,7 +687,7 @@ function tarjetaSugerencia(s, i) {
             placeholder: "Opcional. Ej.: Para compartir.",
             alCambiar: (v) => { if (!agotado) bajada.textContent = v; },
           })),
-        bloqueFoto(s, "foto", () => s.nombre, "➕", "Foto")),
+        bloqueFoto(s, "foto", () => s.nombre, "➕", "Foto", FORMAS.sugerencia)),
       el("div", { class: "acciones-producto" },
         botonesMover(datos.sugerencias, i),
         el("button", {
@@ -583,7 +786,7 @@ function tarjetaProducto(c, ci, p, pi) {
     : campoPrecio(null, p, "precio", { alCambiar: () => dibujarMarcas() });
 
   const fila = el("div", { class: "fila" },
-    el("div", { class: "mini", onclick: alternar }, p.foto ? el("img", { src: "/" + p.foto, alt: "" }) : el("span", {}, c.emoji || "🍽️")),
+    el("div", { class: "mini", onclick: alternar }, p.foto ? imagenEncuadrada(p.foto, p.foto_ajuste) : el("span", {}, c.emoji || "🍽️")),
     el("button", { type: "button", class: "nombre", onclick: alternar }, titulo, marcas, bajada),
     precio,
     interruptor(!agotado, agotado ? "Agotado" : "En venta", (on) => {
@@ -633,7 +836,7 @@ function tarjetaProducto(c, ci, p, pi) {
             }),
             " ⭐ Recomendado: mostrarlo en grande, primero en su categoría"),
           el("small", { class: "ayuda" }, "Usalo para lo que más te conviene vender (lo que deja más ganancia o lo más rico). Mejor 1 por categoría.")),
-        bloqueFoto(p, "foto", () => p.nombre, c.emoji || "🍽️", "Foto")),
+        bloqueFoto(p, "foto", () => p.nombre, c.emoji || "🍽️", "Foto", () => FORMAS.producto(p))),
       el("div", { class: "acciones-producto" },
         el("label", { class: "mover-a" }, "Mover a ",
           el("select", {
@@ -737,9 +940,14 @@ function dibujar() {
 
 // ---------- Guardar y publicar ----------
 
-const ORDEN = ["nombre", "descripcion", "precio", "variantes", "precio_anterior", "foto", "etiqueta", "destacado", "disponible"];
-const ORDEN_SUGERENCIA = ["nombre", "descripcion", "precio", "foto", "disponible"];
-const ORDEN_OFERTA = ["titulo", "descripcion", "precio", "precio_anterior", "foto", "etiqueta", "dias", "desde", "hasta", "inicio", "fin", "activa"];
+const ORDEN = ["nombre", "descripcion", "precio", "variantes", "precio_anterior", "foto", "foto_ajuste", "etiqueta", "destacado", "disponible"];
+const ORDEN_SUGERENCIA = ["nombre", "descripcion", "precio", "foto", "foto_ajuste", "disponible"];
+const ORDEN_OFERTA = ["titulo", "descripcion", "precio", "precio_anterior", "foto", "foto_ajuste", "etiqueta", "dias", "desde", "hasta", "inicio", "fin", "activa"];
+
+// Si no hay foto, tampoco queda cómo acomodarla.
+function sinAjusteSuelto(obj, clave) {
+  if (!obj[clave] || !ajusteValido(obj[claveAjuste(clave)])) delete obj[claveAjuste(clave)];
+}
 
 function limpiarOferta(o) {
   const r = {};
@@ -747,6 +955,7 @@ function limpiarOferta(o) {
   for (const k of Object.keys(o)) if (!(k in r)) r[k] = o[k];
   for (const k of ["titulo", "descripcion", "etiqueta"]) if (typeof r[k] === "string") r[k] = r[k].trim();
   for (const k of ["descripcion", "etiqueta", "foto", "desde", "hasta", "inicio", "fin"]) if (!r[k]) delete r[k];
+  sinAjusteSuelto(r, "foto");
   for (const k of ["precio", "precio_anterior"]) if (r[k] == null) delete r[k];
   if (!r.dias || !r.dias.length || r.dias.length === 7) delete r.dias;
   if (r.activa !== false) delete r.activa;
@@ -759,6 +968,7 @@ function limpiarSugerencia(s) {
   for (const k of Object.keys(s)) if (!(k in r)) r[k] = s[k];
   for (const k of ["nombre", "descripcion"]) if (typeof r[k] === "string") r[k] = r[k].trim();
   for (const k of ["descripcion", "foto"]) if (!r[k]) delete r[k];
+  sinAjusteSuelto(r, "foto");
   if (r.precio == null) delete r.precio;
   if (r.disponible !== false) delete r.disponible;
   return r;
@@ -771,6 +981,7 @@ function limpiarProducto(p) {
   for (const k of Object.keys(p)) if (!(k in r)) r[k] = p[k];
   for (const k of ["nombre", "descripcion", "etiqueta"]) if (typeof r[k] === "string") r[k] = r[k].trim();
   for (const k of ["descripcion", "etiqueta", "foto"]) if (!r[k]) delete r[k];
+  sinAjusteSuelto(r, "foto");
   for (const k of ["precio", "precio_anterior"]) if (r[k] == null) delete r[k];
   if (!r.destacado) delete r.destacado;
   if (r.variantes) {
@@ -786,6 +997,7 @@ function limpiarProducto(p) {
 
 function preparar() {
   const copia = JSON.parse(JSON.stringify(datos));
+  if (copia.negocio) for (const k of ["portada", "logo"]) sinAjusteSuelto(copia.negocio, k);
   copia.ofertas = (copia.ofertas || []).map(limpiarOferta);
   copia.sugerencias = (copia.sugerencias || []).map(limpiarSugerencia);
   if (!copia.sugerencias.length) delete copia.sugerencias;

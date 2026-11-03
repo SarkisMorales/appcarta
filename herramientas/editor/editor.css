@@ -308,7 +308,8 @@ input:focus, textarea:focus, select:focus { outline: 2px solid var(--marron); ou
 .foto-vista.arrastrando { border-color: var(--marron); }
 .foto-vista img { width: 100%; height: 100%; object-fit: cover; }
 .negocio .foto-vista { font-size: 14px; }
-.botones-foto { display: flex; gap: 10px; align-items: center; }
+.botones-foto { display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: center; }
+.botones-foto .btn { white-space: nowrap; }
 .estado-foto { color: var(--suave); font-size: 12px; }
 
 /* ---------- Avisos ---------- */
@@ -417,3 +418,64 @@ input:focus, textarea:focus, select:focus { outline: 2px solid var(--marron); ou
 }
 .pedidos-config .ayuda { margin: 0; }
 .fotos-local { display: flex; flex-direction: column; gap: 18px; }
+
+/* ---------- Acomodar fotos (zoom y posición) ---------- */
+/* Misma cuenta que la carta (estilos.css, .encuadre): --r proporción, --z zoom, --x/--y posición de 0 a 1. */
+
+.mini, .foto-vista { position: relative; }
+.foto-vista.con-foto { border-style: solid; }
+.foto-vista.redondo { border-radius: 50%; max-width: 200px; }
+
+.encuadre {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  container-type: size;
+}
+span.encuadre > img {
+  position: absolute;
+  --ancho: calc(max(100cqw, 100cqh * var(--r)) * var(--z));
+  width: var(--ancho);
+  height: calc(var(--ancho) / var(--r));
+  left: calc((100cqw - var(--ancho)) * var(--x));
+  top: calc((100cqh - var(--ancho) / var(--r)) * var(--y));
+  max-width: none;
+  object-fit: fill;
+  pointer-events: none;
+  user-select: none;
+}
+span.encuadre > img.relleno {
+  display: none;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: blur(14px) brightness(.95);
+  transform: scale(1.2);
+}
+span.encuadre.achicada > img.relleno { display: block; }
+
+.dialogo-encuadre { width: min(640px, 94vw); }
+.dialogo-encuadre .ayuda { margin-bottom: 14px; }
+.dialogo-encuadre .forma { margin: 0 auto; display: flex; flex-direction: column; gap: 4px; text-align: center; }
+.marco { width: 100%; }
+.dialogo-encuadre figcaption { font-size: 12px; color: var(--suave); font-weight: 700; }
+.marco {
+  position: relative;
+  overflow: hidden;
+  border-radius: 10px;
+  background: var(--fondo);
+  box-shadow: 0 0 0 1px var(--linea);
+}
+.marco.redondo { border-radius: 50%; }
+.marco-principal { cursor: grab; touch-action: none; box-shadow: 0 0 0 2px var(--marron); }
+.marco-principal.arrastrando { cursor: grabbing; }
+.marco-principal:focus-visible { outline: 3px solid var(--naranja); outline-offset: 3px; }
+.zoom { display: flex; align-items: center; gap: 10px; margin: 14px 0 8px; }
+.zoom-barra { flex: 1; accent-color: var(--marron); }
+.zoom .icono { font-size: 18px; font-weight: 700; }
+.zoom-atajos { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.otras-formas { margin-top: 18px; padding-top: 12px; border-top: 1px solid var(--linea); }
+.otras-fila { display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-end; margin-top: 8px; }
+.otras-fila .forma { margin: 0; flex: none; }
+.acciones-dialogo { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; }
