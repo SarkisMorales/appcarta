@@ -70,6 +70,12 @@ function esDeEstaNotebook(req) {
   return local && (host === `localhost:${PUERTO}` || host === `127.0.0.1:${PUERTO}`);
 }
 
+// Lo que forma parte de la carta publicada. Todo lo demás (herramientas, copias, .bat…) es solo para esta notebook.
+const PUBLICOS = new Set(["/index.html", "/carta.js", "/estilos.css", "/menu.json"]);
+function esPublico(ruta) {
+  return PUBLICOS.has(ruta) || /^\/(fotos|qr)\/[^/]+$/.test(ruta);
+}
+
 function responderJson(res, codigo, datos) {
   res.writeHead(codigo, { "Content-Type": TIPOS[".json"], "Cache-Control": "no-store" });
   res.end(JSON.stringify(datos));
@@ -227,6 +233,10 @@ const servidor = http.createServer(async (req, res) => {
       return;
     }
     if (ruta.endsWith("/")) ruta += "index.html";
+    // Nunca se muestran carpetas o archivos ocultos (.git: configuración de GitHub, etc.).
+    if (ruta.split("/").some((parte) => parte.startsWith("."))) throw new Error("oculto");
+    // El celular del WiFi solo ve lo que ve cualquiera en internet: la carta y sus fotos.
+    if (!esDeEstaNotebook(req) && !esPublico(ruta)) throw new Error("privado");
     const archivo = path.join(RAIZ, path.normalize(ruta));
     if (!archivo.startsWith(RAIZ) || archivo.includes("node_modules")) throw new Error("fuera");
     const contenido = await fs.readFile(archivo);
